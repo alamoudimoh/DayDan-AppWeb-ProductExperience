@@ -1,13 +1,25 @@
 import { AppCtx, Icon } from "../App";
 import { Task, getMemberById, formatDate } from "../data";
 
-export default function TaskDetailModal({ task, ctx, onComplete }: { task: Task; ctx: AppCtx; onComplete: (id: string) => void }) {
+export default function TaskDetailModal({ task, ctx, onComplete, onDelete, onEdit, onReopen }: { task: Task; ctx: AppCtx; onComplete: (id: string) => void; onDelete: (id: string) => void; onEdit: (t: Task) => void; onReopen: (id: string) => void }) {
   const assignee = task.assigneeId ? getMemberById(task.assigneeId) : null;
   const isDone = task.status === "done";
   const isOverdue = task.status === "overdue";
 
   const statusColor = isDone ? "var(--sig-done)" : isOverdue ? "var(--sig-over)" : task.status === "upcoming" ? "var(--t-muted)" : "var(--sig-due)";
   const statusLabel = isDone ? "Done" : isOverdue ? "Overdue" : task.status === "upcoming" ? "Upcoming" : "To do";
+
+  const handleDelete = () => {
+    ctx.showConfirm({
+      title: "Delete Task",
+      message: `Are you sure you want to delete "${task.title}"? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      danger: true,
+      onConfirm: () => {
+        onDelete(task.id);
+      }
+    });
+  };
 
   return (
     <div className="modal-overlay" onClick={ctx.closeTask}>
@@ -101,10 +113,15 @@ export default function TaskDetailModal({ task, ctx, onComplete }: { task: Task;
               <Icon name="check" size={14} />Mark done
             </button>
           )}
-          <button className="btn btn-secondary">
+          {isDone && (
+            <button className="btn btn-primary" onClick={() => onReopen(task.id)}>
+              <Icon name="refresh" size={14} />Reopen
+            </button>
+          )}
+          <button className="btn btn-secondary" onClick={() => onEdit(task)}>
             <Icon name="edit" size={14} />Edit
           </button>
-          <button className="btn btn-ghost text-sig-over ms-auto">
+          <button className="btn btn-ghost text-sig-over ms-auto" onClick={handleDelete}>
             <Icon name="trash" size={14} />Delete
           </button>
         </div>

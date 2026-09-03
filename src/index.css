@@ -99,7 +99,7 @@
   --sig-flag:         #AC85E0;
   --sig-flag-bg:      #1E1030;
 
-  --font-ui:   "Ubuntu", system-ui, -apple-system, sans-serif;
+  --font-ui:   "Comfortaa", system-ui, -apple-system, sans-serif;
   --font-mono: "Ubuntu Mono", ui-monospace, monospace;
 
   /* ── Identity / member accent tokens ── */
@@ -522,6 +522,21 @@ body.theme-transitioning * {
   padding: 60px 32px;
   text-align: center;
 }
+
+/* ─── Reward card ──────────────────────── */
+.reward-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: box-shadow 0.15s ease;
+  cursor: pointer;
+}
+.reward-card:hover { box-shadow: var(--shadow-md); }
 
 /* ─── Streak pips ──────────────────────── */
 .streak-pips { display: flex; gap: 3px; }

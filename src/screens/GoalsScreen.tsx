@@ -1,7 +1,57 @@
+import { useState } from "react";
 import { AppCtx, Icon } from "../App";
-import { GOALS, MEMBERS, REWARDS, getMemberById } from "../data";
+import { GOALS, MEMBERS, REWARDS, Reward, getMemberById } from "../data";
+
+/* ─── Reward redemption modal ──────────── */
+function RedeemModal({ reward, onConfirm, onClose }: { reward: Reward; onConfirm: () => void; onClose: () => void }) {
+  const [redeemed, setRedeemed] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleRedeem = () => {
+    setLoading(true);
+    setTimeout(() => { setLoading(false); setRedeemed(true); }, 800);
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-panel" style={{ maxWidth: 380 }} onClick={e => e.stopPropagation()}>
+        <div className="p-7 text-center">
+          {!redeemed ? (
+            <>
+              <div style={{ fontSize: 64, marginBottom: 12, lineHeight: 1 }}>{reward.icon}</div>
+              <div className="font-bold text-primary mb-1" style={{ fontSize: 20 }}>{reward.name}</div>
+              {reward.description && <div className="text-muted mb-5" style={{ fontSize: 14 }}>{reward.description}</div>}
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <Icon name="star" size={16} style={{ color: "var(--brand)" }} />
+                <span className="font-bold" style={{ fontSize: 18, color: "var(--brand)", fontFamily: "var(--font-mono)" }}>{reward.pointsCost} points</span>
+              </div>
+              <div className="flex gap-3">
+                <button className="btn btn-secondary flex-1" style={{ justifyContent: "center" }} onClick={onClose}>Cancel</button>
+                <button className="btn btn-primary flex-1" style={{ justifyContent: "center" }} onClick={handleRedeem} disabled={loading}>
+                  {loading ? "Redeeming…" : "Redeem now"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: 72, marginBottom: 12, lineHeight: 1 }}>🎉</div>
+              <div className="font-bold text-primary mb-2" style={{ fontSize: 20 }}>Reward redeemed!</div>
+              <div className="text-muted mb-6" style={{ fontSize: 14, lineHeight: 1.6 }}>
+                <strong>{reward.name}</strong> has been claimed. Show this to your parent or carer to collect it.
+              </div>
+              <button className="btn btn-primary" style={{ justifyContent: "center", width: "100%" }} onClick={() => { onConfirm(); onClose(); }}>
+                Close
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function GoalsScreen({ ctx, isSolo, isChild }: { ctx: AppCtx; isSolo: boolean; isChild: boolean }) {
+  const [redeemingReward, setRedeemingReward] = useState<Reward | null>(null);
   const currentMember = isChild ? MEMBERS.find(m => m.role === "child")! : MEMBERS.find(m => m.isCurrentUser)!;
   const myGoals = isChild ? GOALS.filter(g => g.contributorIds?.includes("liam")) : GOALS;
   const familyGoals = myGoals.filter(g => g.isFamily);
@@ -140,7 +190,7 @@ export default function GoalsScreen({ ctx, isSolo, isChild }: { ctx: AppCtx; isS
                       {r.pointsCost}
                     </div>
                     {can ? (
-                      <button className="btn btn-sm btn-primary">Redeem</button>
+                      <button className="btn btn-sm btn-primary" onClick={() => setRedeemingReward(r)}>Redeem</button>
                     ) : (
                       <span className="text-faint" style={{ fontSize: 11 }}>{pct}%</span>
                     )}
@@ -161,6 +211,14 @@ export default function GoalsScreen({ ctx, isSolo, isChild }: { ctx: AppCtx; isS
           )}
         </div>
       </div>
+
+      {redeemingReward && (
+        <RedeemModal
+          reward={redeemingReward}
+          onClose={() => setRedeemingReward(null)}
+          onConfirm={() => ctx.showToast(`${redeemingReward.name} redeemed! 🎉`)}
+        />
+      )}
     </div>
   );
 }

@@ -1,21 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AppCtx, Icon } from "../App";
-import { MEMBERS } from "../data";
+import { MEMBERS, Task } from "../data";
 
-export default function CreateTaskModal({ ctx, onCreated }: { ctx: AppCtx; onCreated?: (title: string) => void }) {
-  const [title, setTitle] = useState("");
-  const [assigneeId, setAssigneeId] = useState("sarah");
-  const [dueDate, setDueDate] = useState("2026-08-20");
-  const [priority, setPriority] = useState<"normal" | "high">("normal");
-  const [category, setCategory] = useState("household");
-  const [points, setPoints] = useState(20);
+export default function CreateTaskModal({ ctx, onCreated, taskToEdit }: { ctx: AppCtx; onCreated?: (title: string, details?: Partial<Task>) => void; taskToEdit?: Task }) {
+  const [title, setTitle] = useState(taskToEdit?.title || "");
+  const [assigneeId, setAssigneeId] = useState(taskToEdit?.assigneeId || "sarah");
+  const [dueDate, setDueDate] = useState(taskToEdit?.dueDate || "2026-08-20");
+  const [priority, setPriority] = useState<"normal" | "high">(taskToEdit?.priority === "high" ? "high" : "normal");
+  const [category, setCategory] = useState(taskToEdit?.category || "household");
+  const [points, setPoints] = useState(taskToEdit?.points || 20);
 
   const categories = ["household", "personal", "work", "school", "health", "finance"];
 
   const submit = () => {
     if (!title.trim()) return;
-    onCreated?.(title.trim());
-    ctx.showToast(`"${title.trim()}" added`);
+    onCreated?.(title.trim(), { assigneeId, dueDate, priority, category, points });
+    ctx.showToast(taskToEdit ? `Task "${title.trim()}" updated` : `"${title.trim()}" added`);
     ctx.closeCreate();
   };
 
@@ -23,7 +23,7 @@ export default function CreateTaskModal({ ctx, onCreated }: { ctx: AppCtx; onCre
     <div className="modal-overlay" onClick={ctx.closeCreate}>
       <div className="modal-panel" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-line" style={{ borderColor: "var(--line)" }}>
-          <h2 className="text-primary font-bold" style={{ fontSize: 18, margin: 0 }}>New task</h2>
+          <h2 className="text-primary font-bold" style={{ fontSize: 18, margin: 0 }}>{taskToEdit ? "Edit task" : "New task"}</h2>
           <button className="btn btn-ghost btn-icon" onClick={ctx.closeCreate}><Icon name="x" size={18} /></button>
         </div>
 
@@ -129,7 +129,15 @@ export default function CreateTaskModal({ ctx, onCreated }: { ctx: AppCtx; onCre
             style={{ justifyContent: "center" }}
             onClick={submit}
             disabled={!title.trim()}>
-            <Icon name="plus" size={14} />Create task
+            {taskToEdit ? (
+              <>
+                <Icon name="check" size={14} />Save changes
+              </>
+            ) : (
+              <>
+                <Icon name="plus" size={14} />Create task
+              </>
+            )}
           </button>
         </div>
       </div>

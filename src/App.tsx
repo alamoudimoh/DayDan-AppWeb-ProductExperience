@@ -14,16 +14,29 @@ import SettingsScreen from "./screens/SettingsScreen";
 import SearchScreen from "./screens/SearchScreen";
 import ErrorScreen from "./screens/ErrorScreen";
 import MaintenanceScreen from "./screens/MaintenanceScreen";
+import AuthScreen from "./screens/AuthScreen";
+import OnboardingScreen from "./screens/OnboardingScreen";
 import TaskDetailModal from "./components/TaskDetailModal";
 import CreateTaskModal from "./components/CreateTaskModal";
+import ConfirmDialog from "./components/ConfirmDialog";
 
 export type Theme = "daydan" | "sovereign";
 export type View = "quest" | "focus";
 export type Persona = "parent" | "child" | "solo";
+export type AppState = "auth" | "onboarding" | "app";
 export type Screen =
   | "home" | "today" | "all-tasks" | "calendar" | "projects"
   | "routines" | "maintenance" | "shopping" | "goals" | "activity"
   | "settings" | "search" | "error";
+
+export interface ConfirmDialogConfig {
+  title: string;
+  message: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  danger?: boolean;
+  onConfirm: () => void;
+}
 
 export interface AppCtx {
   theme: Theme;
@@ -43,6 +56,10 @@ export interface AppCtx {
   openCreate: () => void;
   closeCreate: () => void;
   showToast: (msg: string) => void;
+  signOut: () => void;
+  goToOnboarding: () => void;
+  triggerSessionExpiry: () => void;
+  showConfirm: (config: ConfirmDialogConfig) => void;
 }
 
 /* ─── Icon system ────────────────────── */
@@ -70,6 +87,7 @@ const ICON_PATHS: Record<string, string> = {
   mail: "M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z|M22 6l-10 7L2 6",
   users: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2|M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z|M23 21v-2a4 4 0 0 0-3-3.87|M16 3.13a4 4 0 0 1 0 7.75",
   download: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4|M7 10l5 5 5-5|M12 15V3",
+  upload: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4|M17 8l-5-5-5 5|M12 3v12",
   help: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z|M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3|M12 17h.01",
   rtl: "M3 9h14|M3 15h14|M7 5l-4 4 4 4|M21 9h-4|M21 15h-4",
   gift: "M20 12v10H4V12|M2 7h20v5H2z|M12 22V7|M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z|M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z",
@@ -95,6 +113,13 @@ const ICON_PATHS: Record<string, string> = {
   tag: "M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z|M7 7h.01",
   repeat: "M17 1l4 4-4 4|M3 11V9a4 4 0 0 1 4-4h14|M7 23l-4-4 4-4|M21 13v2a4 4 0 0 1-4 4H3",
   sparkle: "M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z|M19 3l.75 2.25L22 6l-2.25.75L19 9l-.75-2.25L16 6l2.25-.75L19 3z|M5 17l.75 2.25L8 20l-2.25.75L5 23l-.75-2.25L2 20l2.25-.75L5 17z",
+  shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
+  phone: "M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.09 6.09l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z",
+  monitor: "M8 21h8|M12 17v4|M2 3h20a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z",
+  log_out: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4|M16 17l5-5-5-5|M21 12H9",
+  external: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6|M15 3h6v6|M10 14 21 3",
+  clock: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z|M12 6v6l4 2",
+  database: "M12 2C6.48 2 2 4.24 2 7s4.48 5 10 5 10-2.24 10-5S17.52 2 12 2z|M2 7v5c0 2.76 4.48 5 10 5s10-2.24 10-5V7|M2 12v5c0 2.76 4.48 5 10 5s10-2.24 10-5v-5",
 };
 
 export function Icon({ name, size = 18, className = "", style }: { name: string; size?: number; className?: string; style?: React.CSSProperties }) {
@@ -112,7 +137,7 @@ export function LogoMark({ size = 28, theme }: { size?: number; theme: Theme }) 
     return (
       <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true">
         <circle cx="50" cy="50" r="46" fill="#1A1A1A" stroke="#FFC107" strokeWidth="7" />
-        <text x="50" y="66" textAnchor="middle" fill="#FFC107" fontSize="40" fontWeight="800" fontFamily="Ubuntu, sans-serif">M</text>
+        <text x="50" y="66" textAnchor="middle" fill="#FFC107" fontSize="40" fontWeight="800" fontFamily="Comfortaa, sans-serif">M</text>
       </svg>
     );
   }
@@ -159,7 +184,6 @@ function Sidebar({ screen, view, theme, persona, isRTL, onNavigate, onViewChange
 
   const renderItem = (item: NavDef) => {
     if (isChild && item.childHidden) return null;
-    const isOverdue = item.id === "today";
     return (
       <button key={item.id} className={`nav-item ${screen === item.id ? "active" : ""}`} onClick={() => onNavigate(item.id)}>
         <Icon name={item.icon} size={15} />
@@ -303,6 +327,8 @@ function ToastContainer({ toasts }: { toasts: { id: string; msg: string }[] }) {
 
 /* ─── App ────────────────────────────── */
 export default function App() {
+  const [appState, setAppState] = useState<AppState>("app");
+  const [isSessionExpired, setIsSessionExpired] = useState(false);
   const [theme, setThemeState] = useState<Theme>("daydan");
   const [view, setViewState] = useState<View>("focus");
   const [persona, setPersonaState] = useState<Persona>("parent");
@@ -310,8 +336,10 @@ export default function App() {
   const [isRTL, setIsRTL] = useState(false);
   const [taskDetail, setTaskDetail] = useState<Task | null>(null);
   const [showCreateTask, setShowCreateTask] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [toasts, setToasts] = useState<{ id: string; msg: string }[]>([]);
   const [tasks, setTasks] = useState<Task[]>(TASKS);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogConfig | null>(null);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -346,7 +374,27 @@ export default function App() {
   const openTask = (t: Task) => setTaskDetail(t);
   const closeTask = () => setTaskDetail(null);
   const openCreate = () => setShowCreateTask(true);
-  const closeCreate = () => setShowCreateTask(false);
+  const closeCreate = () => { setShowCreateTask(false); setTaskToEdit(null); };
+
+  const openEditTask = (t: Task) => {
+    setTaskDetail(null);
+    setTaskToEdit(t);
+  };
+
+  const signOut = () => {
+    setIsSessionExpired(false);
+    setAppState("auth");
+    showToast("Signed out");
+  };
+
+  const triggerSessionExpiry = () => {
+    setIsSessionExpired(true);
+    setAppState("auth");
+  };
+
+  const goToOnboarding = () => setAppState("onboarding");
+
+  const showConfirm = (config: ConfirmDialogConfig) => setConfirmDialog(config);
 
   const completeTask = (taskId: string) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: "done" as const, completedAt: new Date().toISOString() } : t));
@@ -354,19 +402,63 @@ export default function App() {
     setTaskDetail(null);
   };
 
+  const reopenTask = (taskId: string) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: "todo" as const, completedAt: undefined } : t));
+    showToast("Task reopened");
+    setTaskDetail(null);
+  };
+
+  const deleteTask = (taskId: string) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: "archived" as const } : t).filter(t => t.id !== taskId));
+    showToast("Task deleted");
+    setTaskDetail(null);
+  };
+
+  const updateTask = (taskId: string, title: string, details?: Partial<Task>) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, title, ...details } : t));
+  };
+
   const ctx: AppCtx = {
     theme, view, persona, screen, isRTL, taskDetail, showCreateTask,
     navigate, setView, setTheme, setPersona, toggleRTL,
     openTask, closeTask, openCreate, closeCreate, showToast,
+    signOut, goToOnboarding, triggerSessionExpiry, showConfirm,
   };
 
+  /* ─── Auth / Onboarding shells ─── */
+  if (appState === "auth") {
+    return (
+      <>
+        <AuthScreen
+          theme={theme}
+          isSessionExpired={isSessionExpired}
+          onAuthenticated={() => { setAppState("app"); setIsSessionExpired(false); setScreen("home"); showToast("Welcome back, Sarah!"); }}
+        />
+        <ToastContainer toasts={toasts} />
+      </>
+    );
+  }
+
+  if (appState === "onboarding") {
+    return (
+      <>
+        <OnboardingScreen
+          theme={theme}
+          onComplete={(selectedView, _name) => { setAppState("app"); setViewState(selectedView); setPersonaState("solo"); setScreen("home"); showToast("Welcome to DayDan!"); }}
+        />
+        <ToastContainer toasts={toasts} />
+      </>
+    );
+  }
+
+  /* ─── Main app ─── */
   const activeView = persona === "child" ? "quest" : view;
   const isSolo = persona === "solo";
   const isChild = persona === "child";
 
   const renderScreen = () => {
     switch (screen) {
-      case "home": return activeView === "quest" ? <QuestHome ctx={ctx} tasks={tasks} isSolo={isSolo} /> : <FocusHome ctx={ctx} tasks={tasks} isSolo={isSolo} />;
+      case "home": return activeView === "quest" ? <QuestHome ctx={ctx} tasks={tasks} isSolo={isSolo} onComplete={completeTask} /> : <FocusHome ctx={ctx} tasks={tasks} isSolo={isSolo} onComplete={completeTask} />;
       case "today": return <TodayScreen ctx={ctx} tasks={tasks} onComplete={completeTask} />;
       case "all-tasks": return <AllTasksScreen ctx={ctx} tasks={tasks} onComplete={completeTask} />;
       case "calendar": return <CalendarScreen ctx={ctx} tasks={tasks} />;
@@ -379,7 +471,7 @@ export default function App() {
       case "settings": return <SettingsScreen ctx={ctx} isSolo={isSolo} />;
       case "search": return <SearchScreen ctx={ctx} />;
       case "error": return <ErrorScreen ctx={ctx} />;
-      default: return <FocusHome ctx={ctx} tasks={tasks} isSolo={isSolo} />;
+      default: return <FocusHome ctx={ctx} tasks={tasks} isSolo={isSolo} onComplete={completeTask} />;
     }
   };
 
@@ -413,13 +505,21 @@ export default function App() {
       </main>
       <MobileNav screen={screen} onNavigate={navigate} />
 
-      {taskDetail && <TaskDetailModal task={taskDetail} ctx={ctx} onComplete={completeTask} />}
-      {showCreateTask && <CreateTaskModal ctx={ctx} onCreated={(title: string) => {
-        const newTask: Task = { id: `task-${Date.now()}`, title, status: "todo", priority: "medium", assigneeId: isChild ? "liam" : "sarah", dueDate: "2026-08-15", points: 15 };
+      {taskDetail && <TaskDetailModal task={taskDetail} ctx={ctx} onComplete={completeTask} onDelete={deleteTask} onEdit={openEditTask} onReopen={reopenTask} />}
+      {showCreateTask && <CreateTaskModal ctx={ctx} onCreated={(title: string, details?: Partial<Task>) => {
+        const newTask: Task = { id: `task-${Date.now()}`, title, status: "todo", priority: details?.priority || "medium", assigneeId: details?.assigneeId || (isChild ? "liam" : "sarah"), dueDate: details?.dueDate || "2026-08-15", points: details?.points || 15, category: details?.category };
         setTasks(prev => [newTask, ...prev]);
       }} />}
+      {taskToEdit && <CreateTaskModal ctx={{...ctx, closeCreate}} taskToEdit={taskToEdit} onCreated={(title: string, details?: Partial<Task>) => {
+        updateTask(taskToEdit.id, title, details);
+      }} />}
+
+      {confirmDialog && (
+        <ConfirmDialog config={confirmDialog} onClose={() => setConfirmDialog(null)} />
+      )}
 
       <ToastContainer toasts={toasts} />
     </div>
   );
 }
+

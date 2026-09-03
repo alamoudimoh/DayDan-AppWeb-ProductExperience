@@ -71,10 +71,11 @@ function WorkloadRow({ member, max }: { member: typeof MEMBERS[0]; max: number }
   );
 }
 
-export default function FocusHome({ ctx, tasks, isSolo }: { ctx: AppCtx; tasks: Task[]; isSolo: boolean }) {
+export default function FocusHome({ ctx, tasks, isSolo, onComplete }: { ctx: AppCtx; tasks: Task[]; isSolo: boolean; onComplete: (id: string) => void }) {
+  const currentUser = MEMBERS.find(m => m.isCurrentUser)!;
   const todayTasks = getTodayTasks().map(t => tasks.find(x => x.id === t.id) || t);
   const overdue = getOverdueTasks().map(t => tasks.find(x => x.id === t.id) || t);
-  const myTasks = todayTasks.filter(t => t.assigneeId === "sarah");
+  const myTasks = todayTasks.filter(t => t.assigneeId === currentUser.id);
   const done = myTasks.filter(t => t.status === "done");
   const upcoming = tasks.filter(t => t.status === "upcoming").slice(0, 4);
   const maxCompleted = Math.max(...MEMBERS.map(m => m.tasksCompleted));
@@ -89,7 +90,7 @@ export default function FocusHome({ ctx, tasks, isSolo }: { ctx: AppCtx; tasks: 
             Friday, 15 August 2026
           </div>
           <h1 className="text-primary" style={{ fontSize: 26, fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
-            Good morning, Sarah
+            Good morning, {currentUser.name}
           </h1>
           <p className="text-muted" style={{ fontSize: 14, margin: "6px 0 0" }}>
             {overdue.length > 0 ? `${overdue.length} task${overdue.length > 1 ? "s" : ""} overdue — let's clear them first.` : `You're on track. ${done.length} of ${myTasks.length} tasks done today.`}
@@ -150,7 +151,7 @@ export default function FocusHome({ ctx, tasks, isSolo }: { ctx: AppCtx; tasks: 
                     <div className="font-bold text-primary">All done for today!</div>
                   </div>
                 ) : myTasks.map(t => (
-                  <TaskRow key={t.id} task={t} onClick={() => ctx.openTask(t)} onComplete={() => {}} />
+                  <TaskRow key={t.id} task={t} onClick={() => ctx.openTask(t)} onComplete={onComplete} />
                 ))}
               </div>
               <div className="px-4 py-3 border-t border-line" style={{ borderColor: "var(--line)" }}>
@@ -167,7 +168,7 @@ export default function FocusHome({ ctx, tasks, isSolo }: { ctx: AppCtx; tasks: 
               </div>
               <div className="py-1">
                 {upcoming.map(t => (
-                  <TaskRow key={t.id} task={t} onClick={() => ctx.openTask(t)} onComplete={() => {}} />
+                  <TaskRow key={t.id} task={t} onClick={() => ctx.openTask(t)} onComplete={onComplete} />
                 ))}
               </div>
               <div className="px-4 py-3 border-t border-line" style={{ borderColor: "var(--line)" }}>
