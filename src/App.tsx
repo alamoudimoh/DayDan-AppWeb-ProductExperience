@@ -211,7 +211,7 @@ function Sidebar({ screen, view, theme, persona, isRTL, onNavigate, onViewChange
             {isChild ? "QUEST" : view === "quest" ? "QUEST MODE" : "FOCUS MODE"}
           </div>
         </div>
-        <button className="btn btn-ghost btn-icon" onClick={onOpenCreate} title="New task" style={{ color: "var(--brand)" }}>
+        <button aria-label="Create task" className="btn btn-ghost btn-icon" onClick={onOpenCreate} title="New task" style={{ color: "var(--brand)" }}>
           <Icon name="plus" size={16} />
         </button>
       </div>
@@ -281,7 +281,7 @@ function Sidebar({ screen, view, theme, persona, isRTL, onNavigate, onViewChange
           <Icon name="settings" size={14} />
           <span>Settings</span>
         </button>
-        <div className="flex items-center gap-2 px-2 py-2 cursor-pointer rounded-lg hover:bg-surface-2" style={{ borderRadius: "var(--r-md)" }} onClick={() => onNavigate("settings")}>
+        <button className="flex items-center gap-2 px-2 py-2 cursor-pointer rounded-lg hover:bg-surface-2 text-start" style={{ borderRadius: "var(--r-md)", border: "none", background: "transparent", fontFamily: "var(--font-ui)" }} onClick={() => onNavigate("settings")}>
           <div className="avatar" style={{ width: 30, height: 30, background: currentMember.avatarColor, fontSize: 11 }}>
             {currentMember.initials}
           </div>
@@ -289,7 +289,7 @@ function Sidebar({ screen, view, theme, persona, isRTL, onNavigate, onViewChange
             <div className="font-semibold text-primary truncate" style={{ fontSize: 13 }}>{currentMember.name}</div>
             <div className="text-faint truncate capitalize" style={{ fontSize: 10 }}>{currentMember.role}</div>
           </div>
-        </div>
+        </button>
       </div>
     </nav>
   );
@@ -324,8 +324,8 @@ function MobileNav({ screen, onNavigate }: { screen: Screen; onNavigate: (s: Scr
 /* ─── Toast ──────────────────────────── */
 function ToastContainer({ toasts }: { toasts: { id: string; msg: string }[] }) {
   return (
-    <div className="toast-container">
-      {toasts.map(t => <div key={t.id} className="toast">{t.msg}</div>)}
+    <div className="toast-container" aria-live="polite" aria-atomic="true">
+      {toasts.map(t => <div key={t.id} className="toast" role="status">{t.msg}</div>)}
     </div>
   );
 }
@@ -428,7 +428,7 @@ export default function App() {
   };
 
   const deleteTask = (taskId: string) => {
-    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: "archived" as const } : t).filter(t => t.id !== taskId));
+    setTasks(prev => prev.filter(t => t.id !== taskId));
     showToast("Task deleted");
     setTaskDetail(null);
   };
@@ -519,9 +519,9 @@ export default function App() {
             <span className="ms-auto font-mono text-faint" style={{ fontSize: 10 }}>⌘K</span>
           </button>
           <div className="flex gap-2 ms-auto">
-            <button className="btn btn-ghost btn-icon md:hidden" onClick={() => navigate("search")}><Icon name="search" size={18} /></button>
-            <button className="btn btn-ghost btn-icon" onClick={() => navigate("activity")}><Icon name="bell" size={18} /></button>
-            <button className="btn btn-primary btn-icon" onClick={openCreate} style={{ borderRadius: "var(--r-md)" }}><Icon name="plus" size={18} /></button>
+            <button aria-label="Search" className="btn btn-ghost btn-icon md:hidden" onClick={() => navigate("search")}><Icon name="search" size={18} /></button>
+            <button aria-label="Open activity" className="btn btn-ghost btn-icon" onClick={() => navigate("activity")}><Icon name="bell" size={18} /></button>
+            <button aria-label="Create task" className="btn btn-primary btn-icon" onClick={openCreate} style={{ borderRadius: "var(--r-md)" }}><Icon name="plus" size={18} /></button>
           </div>
         </div>
         {renderScreen()}
@@ -545,4 +545,3 @@ export default function App() {
     </div>
   );
 }
-

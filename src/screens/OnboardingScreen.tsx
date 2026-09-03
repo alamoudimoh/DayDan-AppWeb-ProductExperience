@@ -84,7 +84,9 @@ export default function OnboardingScreen({ theme, onComplete }: Props) {
                 <p className="text-muted" style={{ fontSize: 14, lineHeight: 1.6 }}>This is how you'll appear to household members you invite later.</p>
               </div>
               <div className="mb-3">
+                <label htmlFor="onboarding-name" className="sr-only">Your name</label>
                 <input
+                  id="onboarding-name"
                   className="input"
                   style={{ fontSize: 18, padding: "14px 16px" }}
                   type="text"
