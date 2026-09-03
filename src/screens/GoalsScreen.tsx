@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AppCtx, Icon } from "../App";
 import { GOALS, MEMBERS, REWARDS, Reward, getMemberById } from "../data";
+import { useDialogAccessibility } from "../hooks/useDialogAccessibility";
 
 /* ─── Reward redemption modal ──────────── */
 function RedeemModal({ reward, onConfirm, onClose }: { reward: Reward; onConfirm: () => void; onClose: () => void }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogAccessibility(onClose, dialogRef);
   const [redeemed, setRedeemed] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -13,20 +16,20 @@ function RedeemModal({ reward, onConfirm, onClose }: { reward: Reward; onConfirm
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-panel" style={{ maxWidth: 380 }} onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay" onMouseDown={onClose}>
+      <div ref={dialogRef} className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="redeem-reward-title" aria-describedby="redeem-reward-description" style={{ maxWidth: 380 }} onMouseDown={e => e.stopPropagation()}>
         <div className="p-7 text-center">
           {!redeemed ? (
             <>
               <div style={{ fontSize: 64, marginBottom: 12, lineHeight: 1 }}>{reward.icon}</div>
-              <div className="font-bold text-primary mb-1" style={{ fontSize: 20 }}>{reward.name}</div>
-              {reward.description && <div className="text-muted mb-5" style={{ fontSize: 14 }}>{reward.description}</div>}
+              <h2 id="redeem-reward-title" className="font-bold text-primary mb-1" style={{ fontSize: 20 }}>{reward.name}</h2>
+              <p id="redeem-reward-description" className="text-muted mb-5" style={{ fontSize: 14 }}>{reward.description || `Redeem this reward for ${reward.pointsCost} points.`}</p>
               <div className="flex items-center justify-center gap-2 mb-6">
                 <Icon name="star" size={16} style={{ color: "var(--brand)" }} />
                 <span className="font-bold" style={{ fontSize: 18, color: "var(--brand)", fontFamily: "var(--font-mono)" }}>{reward.pointsCost} points</span>
               </div>
               <div className="flex gap-3">
-                <button className="btn btn-secondary flex-1" style={{ justifyContent: "center" }} onClick={onClose}>Cancel</button>
+                <button data-dialog-initial-focus className="btn btn-secondary flex-1" style={{ justifyContent: "center" }} onClick={onClose}>Cancel</button>
                 <button className="btn btn-primary flex-1" style={{ justifyContent: "center" }} onClick={handleRedeem} disabled={loading}>
                   {loading ? "Redeeming…" : "Redeem now"}
                 </button>
@@ -110,7 +113,7 @@ export default function GoalsScreen({ ctx, isSolo, isChild }: { ctx: AppCtx; isS
                     </div>
                   </div>
                   <div className="text-end flex-shrink-0">
-                    <div className="font-bold" style={{ fontSize: 22, color: g.color, fontFamily: "var(--font-mono)" }}>
+                    <div className="font-bold text-primary" style={{ fontSize: 22, fontFamily: "var(--font-mono)" }}>
                       {Math.round((g.progress / g.target) * 100)}%
                     </div>
                     <div className="text-faint" style={{ fontSize: 11 }}>{g.progress}/{g.target} {g.unit}</div>
@@ -154,7 +157,7 @@ export default function GoalsScreen({ ctx, isSolo, isChild }: { ctx: AppCtx; isS
                     <div className="font-bold text-primary" style={{ fontSize: 14 }}>{g.name}</div>
                     {g.description && <div className="text-muted" style={{ fontSize: 12 }}>{g.description}</div>}
                   </div>
-                  <div className="font-bold" style={{ fontSize: 20, color: g.color, fontFamily: "var(--font-mono)" }}>
+                  <div className="font-bold text-primary" style={{ fontSize: 20, fontFamily: "var(--font-mono)" }}>
                     {g.progress}/{g.target}
                   </div>
                 </div>
