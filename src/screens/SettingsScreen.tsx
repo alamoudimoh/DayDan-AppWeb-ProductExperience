@@ -196,7 +196,6 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
   /* ─ local state ─ */
   const [showInvite, setShowInvite] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [pendingInvite, setPendingInvite] = useState<string | null>(null);
 
   /* Appearance */
   const [notifToggles, setNotifToggles] = useState({
@@ -463,14 +462,14 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
                       )}
                     </div>
                   ))}
-                  {pendingInvite && (
+                  {ctx.pendingInvite && (
                     <div className="flex items-center gap-3">
                       <div className="avatar" style={{ width: 34, height: 34, background: "var(--line-strong)", fontSize: 12 }}>?</div>
                       <div className="flex-1 min-w-0">
-                        <div className="font-medium text-primary" style={{ fontSize: 13 }}>{pendingInvite}</div>
+                        <div className="font-medium text-primary" style={{ fontSize: 13 }}>{ctx.pendingInvite}</div>
                         <div className="text-faint" style={{ fontSize: 11 }}>Invitation pending · not yet active</div>
                       </div>
-                      <span className="badge" style={{ background: "var(--sig-due-bg)", color: "var(--sig-due)", fontSize: 10 }}>Pending</span>
+                      <button className="btn btn-secondary btn-sm" onClick={ctx.acceptInvite}>Demo: Accept</button>
                     </div>
                   )}
                 </div>
@@ -495,13 +494,14 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
                   <Icon name="plus" size={14} />
                   Invite someone
                 </button>
-                {pendingInvite && (
+                {ctx.pendingInvite && (
                   <div className="mt-4 p-3 flex items-center gap-3 rounded-lg" style={{ background: "var(--sig-due-bg)", borderRadius: "var(--r-md)" }}>
                     <Icon name="clock" size={15} style={{ color: "var(--sig-due)", flexShrink: 0 }} />
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <div className="font-semibold" style={{ fontSize: 13, color: "var(--sig-due)" }}>Invitation pending</div>
-                      <div style={{ fontSize: 12, color: "var(--t-muted)" }}>{pendingInvite} has been invited but has not yet joined.</div>
+                      <div style={{ fontSize: 12, color: "var(--t-muted)" }}>{ctx.pendingInvite} has been invited but has not yet joined.</div>
                     </div>
+                    <button className="btn btn-secondary btn-sm" style={{ background: "var(--surface)", border: "1px solid var(--line)" }} onClick={ctx.acceptInvite}>Demo: Accept</button>
                   </div>
                 )}
               </div>
@@ -544,6 +544,15 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
             <Row icon="error" label="Error reporting flow" sub="See the full error and support flow">
               <button className="btn btn-secondary btn-sm" onClick={() => ctx.navigate("error")}>Open</button>
             </Row>
+            <Row icon="wifi_off" label="Offline state" sub="Demo the disconnected experience">
+              <button className="btn btn-secondary btn-sm" onClick={() => ctx.navigate("offline")}>Open</button>
+            </Row>
+            <Row icon="database" label="Unavailable data state" sub="Demo failed data loading">
+              <button className="btn btn-secondary btn-sm" onClick={() => ctx.navigate("unavailable")}>Open</button>
+            </Row>
+            <Row icon="lock" label="Permission denied state" sub="Demo restricted access">
+              <button className="btn btn-secondary btn-sm" onClick={() => ctx.navigate("permission-denied")}>Open</button>
+            </Row>
           </Section>
 
           {/* ── Support ── */}
@@ -585,7 +594,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
       {showInvite && (
         <InviteModal
           onClose={() => setShowInvite(false)}
-          onSuccess={(email) => { setPendingInvite(email); ctx.showToast(`Invitation sent to ${email}`); }}
+          onSuccess={(email) => { setShowInvite(false); ctx.inviteMember(email); }}
         />
       )}
 

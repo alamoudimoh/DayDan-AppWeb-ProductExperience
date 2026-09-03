@@ -14,6 +14,11 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
   const [newListEmoji, setNewListEmoji] = useState("🛒");
   const [newListShared, setNewListShared] = useState(false);
 
+  const [isEditingList, setIsEditingList] = useState(false);
+  const [editListName, setEditListName] = useState("");
+  const [editListEmoji, setEditListEmoji] = useState("");
+  const [editListShared, setEditListShared] = useState(false);
+
   const visibleLists = isSolo ? lists.filter(l => !l.isShared) : lists;
   const currentList = visibleLists.find(l => l.id === activeList) || visibleLists[0];
 
@@ -154,10 +159,63 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
                   </div>
                 </div>
               </div>
+            ) : isEditingList ? (
+              <div className="card p-5 border border-line" style={{ borderRadius: "var(--r-xl)" }}>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-primary font-bold" style={{ fontSize: 18, margin: 0 }}>Edit List</h2>
+                  <button className="btn btn-ghost btn-icon" onClick={() => setIsEditingList(false)}>
+                    <Icon name="x" size={16} />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex gap-3">
+                    <div className="flex flex-col gap-1 w-16">
+                      <label className="text-muted" style={{ fontSize: 12, fontWeight: 600 }}>Emoji</label>
+                      <input className="input text-center" value={editListEmoji} onChange={e => setEditListEmoji(e.target.value)} maxLength={2} style={{ fontSize: 18, padding: "8px 0" }} />
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1">
+                      <label className="text-muted" style={{ fontSize: 12, fontWeight: 600 }}>List Name</label>
+                      <input className="input" value={editListName} onChange={e => setEditListName(e.target.value)} autoFocus />
+                    </div>
+                  </div>
+                  {!isSolo && (
+                    <label className="flex items-center gap-2 cursor-pointer mt-1">
+                      <input type="checkbox" checked={editListShared} onChange={e => setEditListShared(e.target.checked)} style={{ accentColor: "var(--brand)", width: 16, height: 16 }} />
+                      <span className="text-primary font-medium" style={{ fontSize: 14 }}>Share with family</span>
+                    </label>
+                  )}
+                  <div className="flex items-center justify-between mt-2 pt-4 border-t border-line" style={{ borderColor: "var(--line)" }}>
+                    <button className="btn btn-ghost text-sig-over px-2" onClick={() => {
+                      ctx.showConfirm({
+                        title: "Delete List",
+                        message: `Are you sure you want to delete "${currentList.name}"? This cannot be undone.`,
+                        confirmLabel: "Delete",
+                        danger: true,
+                        onConfirm: () => {
+                          const newLists = lists.filter(l => l.id !== currentList.id);
+                          setLists(newLists);
+                          setIsEditingList(false);
+                          if (!newLists.find(l => l.id === activeList)) setActiveList(newLists[0]?.id || "");
+                          ctx.showToast("List deleted");
+                        }
+                      });
+                    }}>Delete list</button>
+                    <div className="flex gap-2">
+                      <button className="btn btn-ghost" onClick={() => setIsEditingList(false)}>Cancel</button>
+                      <button className="btn btn-primary" onClick={() => {
+                        if (!editListName.trim()) return;
+                        setLists(prev => prev.map(l => l.id === currentList.id ? { ...l, name: editListName.trim(), emoji: editListEmoji, isShared: !isSolo && editListShared } : l));
+                        setIsEditingList(false);
+                        ctx.showToast("List updated");
+                      }} disabled={!editListName.trim()}>Save Changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             ) : currentList ? (
               <>
-                {/* List header */}
-                <div className="flex items-center justify-between mb-4">
+            {/* List header */}
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="flex items-center gap-2">
                   <span style={{ fontSize: 24 }}>{currentList.emoji}</span>
@@ -169,11 +227,21 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
                   {done.length > 0 && ` · ${done.length} done`}
                 </div>
               </div>
-              {done.length > 0 && (
-                <button className="btn btn-ghost btn-sm text-muted" onClick={() => clearDone(currentList.id)}>
-                  Clear done
+              <div className="flex items-center gap-2">
+                {done.length > 0 && (
+                  <button className="btn btn-ghost btn-sm text-muted" onClick={() => clearDone(currentList.id)}>
+                    Clear done
+                  </button>
+                )}
+                <button className="btn btn-ghost btn-icon text-muted" onClick={() => {
+                  setEditListName(currentList.name);
+                  setEditListEmoji(currentList.emoji);
+                  setEditListShared(currentList.isShared || false);
+                  setIsEditingList(true);
+                }}>
+                  <Icon name="edit" size={16} />
                 </button>
-              )}
+              </div>
             </div>
 
             {/* Add item input */}

@@ -16,6 +16,7 @@ import ErrorScreen from "./screens/ErrorScreen";
 import MaintenanceScreen from "./screens/MaintenanceScreen";
 import AuthScreen from "./screens/AuthScreen";
 import OnboardingScreen from "./screens/OnboardingScreen";
+import { OfflineScreen, UnavailableScreen, PermissionDeniedScreen } from "./screens/SharedStatesScreens";
 import TaskDetailModal from "./components/TaskDetailModal";
 import CreateTaskModal from "./components/CreateTaskModal";
 import ConfirmDialog from "./components/ConfirmDialog";
@@ -27,7 +28,7 @@ export type AppState = "auth" | "onboarding" | "app";
 export type Screen =
   | "home" | "today" | "all-tasks" | "calendar" | "projects"
   | "routines" | "maintenance" | "shopping" | "goals" | "activity"
-  | "settings" | "search" | "error";
+  | "settings" | "search" | "error" | "offline" | "unavailable" | "permission-denied";
 
 export interface ConfirmDialogConfig {
   title: string;
@@ -60,6 +61,9 @@ export interface AppCtx {
   goToOnboarding: () => void;
   triggerSessionExpiry: () => void;
   showConfirm: (config: ConfirmDialogConfig) => void;
+  pendingInvite: string | null;
+  inviteMember: (email: string) => void;
+  acceptInvite: () => void;
 }
 
 /* ─── Icon system ────────────────────── */
@@ -120,6 +124,7 @@ const ICON_PATHS: Record<string, string> = {
   external: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6|M15 3h6v6|M10 14 21 3",
   clock: "M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z|M12 6v6l4 2",
   database: "M12 2C6.48 2 2 4.24 2 7s4.48 5 10 5 10-2.24 10-5S17.52 2 12 2z|M2 7v5c0 2.76 4.48 5 10 5s10-2.24 10-5V7|M2 12v5c0 2.76 4.48 5 10 5s10-2.24 10-5v-5",
+  wifi_off: "M1 1l22 22|M16.72 11.06A10.94 10.94 0 0 1 19 12.55|M5 12.55a10.94 10.94 0 0 1 5.17-2.39|M10.71 5.05A16 16 0 0 1 22.58 9|M1.42 9a15.91 15.91 0 0 1 4.7-2.88|M8.53 16.11a6 6 0 0 1 6.95 0|M12 20h.01",
 };
 
 export function Icon({ name, size = 18, className = "", style }: { name: string; size?: number; className?: string; style?: React.CSSProperties }) {
@@ -340,6 +345,7 @@ export default function App() {
   const [toasts, setToasts] = useState<{ id: string; msg: string }[]>([]);
   const [tasks, setTasks] = useState<Task[]>(TASKS);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogConfig | null>(null);
+  const [pendingInvite, setPendingInvite] = useState<string | null>(null);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -396,6 +402,19 @@ export default function App() {
 
   const showConfirm = (config: ConfirmDialogConfig) => setConfirmDialog(config);
 
+  const inviteMember = (email: string) => {
+    setPendingInvite(email);
+    showToast(`Invitation sent to ${email}`);
+  };
+
+  const acceptInvite = () => {
+    if (pendingInvite) {
+      setPendingInvite(null);
+      setPersonaState("parent");
+      showToast(`${pendingInvite} joined! Family mode activated.`);
+    }
+  };
+
   const completeTask = (taskId: string) => {
     setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status: "done" as const, completedAt: new Date().toISOString() } : t));
     showToast("Task completed ✓");
@@ -423,6 +442,7 @@ export default function App() {
     navigate, setView, setTheme, setPersona, toggleRTL,
     openTask, closeTask, openCreate, closeCreate, showToast,
     signOut, goToOnboarding, triggerSessionExpiry, showConfirm,
+    pendingInvite, inviteMember, acceptInvite,
   };
 
   /* ─── Auth / Onboarding shells ─── */
@@ -471,6 +491,9 @@ export default function App() {
       case "settings": return <SettingsScreen ctx={ctx} isSolo={isSolo} />;
       case "search": return <SearchScreen ctx={ctx} />;
       case "error": return <ErrorScreen ctx={ctx} />;
+      case "offline": return <OfflineScreen ctx={ctx} />;
+      case "unavailable": return <UnavailableScreen ctx={ctx} />;
+      case "permission-denied": return <PermissionDeniedScreen ctx={ctx} />;
       default: return <FocusHome ctx={ctx} tasks={tasks} isSolo={isSolo} onComplete={completeTask} />;
     }
   };
