@@ -1,15 +1,12 @@
-import { useRef, useState } from "react";
+import { useState, useEffect } from "react";
 import { AppCtx, Icon } from "../App";
 import { MEMBERS, Task } from "../data";
-import { useDialogAccessibility } from "../hooks/useDialogAccessibility";
 
 export default function CreateTaskModal({ ctx, onCreated, taskToEdit }: { ctx: AppCtx; onCreated?: (title: string, details?: Partial<Task>) => void; taskToEdit?: Task }) {
-  const dialogRef = useRef<HTMLDivElement>(null);
-  useDialogAccessibility(ctx.closeCreate, dialogRef);
   const [title, setTitle] = useState(taskToEdit?.title || "");
   const [assigneeId, setAssigneeId] = useState(taskToEdit?.assigneeId || "sarah");
   const [dueDate, setDueDate] = useState(taskToEdit?.dueDate || "2026-08-20");
-  const [priority, setPriority] = useState<"medium" | "high">(taskToEdit?.priority === "high" ? "high" : "medium");
+  const [priority, setPriority] = useState<"normal" | "high">(taskToEdit?.priority === "high" ? "high" : "normal");
   const [category, setCategory] = useState(taskToEdit?.category || "household");
   const [points, setPoints] = useState(taskToEdit?.points || 20);
 
@@ -23,19 +20,18 @@ export default function CreateTaskModal({ ctx, onCreated, taskToEdit }: { ctx: A
   };
 
   return (
-    <div className="modal-overlay" onMouseDown={ctx.closeCreate}>
-      <div ref={dialogRef} className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="task-dialog-title" onMouseDown={e => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={ctx.closeCreate}>
+      <div className="modal-panel" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-line" style={{ borderColor: "var(--line)" }}>
-          <h2 id="task-dialog-title" className="text-primary font-bold" style={{ fontSize: 18, margin: 0 }}>{taskToEdit ? "Edit task" : "New task"}</h2>
-          <button aria-label="Close task dialog" className="btn btn-ghost btn-icon" onClick={ctx.closeCreate}><Icon name="x" size={18} /></button>
+          <h2 className="text-primary font-bold" style={{ fontSize: 18, margin: 0 }}>{taskToEdit ? "Edit task" : "New task"}</h2>
+          <button className="btn btn-ghost btn-icon" onClick={ctx.closeCreate}><Icon name="x" size={18} /></button>
         </div>
 
         <div className="px-6 py-5 flex flex-col gap-4">
           {/* Title */}
           <div>
-            <label htmlFor="task-title" className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Title</label>
+            <label className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Title</label>
             <input
-              id="task-title" data-dialog-initial-focus
               className="input w-full"
               placeholder="What needs to be done?"
               value={title}
@@ -46,7 +42,7 @@ export default function CreateTaskModal({ ctx, onCreated, taskToEdit }: { ctx: A
             />
           </div>
 
-          <div className="task-form-grid grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             {/* Assignee */}
             <div>
               <label className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Assigned to</label>
@@ -71,15 +67,15 @@ export default function CreateTaskModal({ ctx, onCreated, taskToEdit }: { ctx: A
             <div className="flex flex-col gap-4">
               {/* Due date */}
               <div>
-                <label htmlFor="task-due-date" className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Due date</label>
-                <input id="task-due-date" type="date" className="input w-full" value={dueDate} onChange={e => setDueDate(e.target.value)} />
+                <label className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Due date</label>
+                <input type="date" className="input w-full" value={dueDate} onChange={e => setDueDate(e.target.value)} />
               </div>
 
               {/* Priority */}
               <div>
                 <label className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Priority</label>
                 <div className="flex gap-2">
-                  {(["medium", "high"] as const).map(p => (
+                  {(["normal", "high"] as const).map(p => (
                     <button key={p}
                       onClick={() => setPriority(p)}
                       className="flex-1 py-2 rounded-lg font-semibold text-center"
@@ -98,7 +94,7 @@ export default function CreateTaskModal({ ctx, onCreated, taskToEdit }: { ctx: A
               {/* Points */}
               <div>
                 <label className="section-label" style={{ padding: "0 0 6px", display: "block" }}>Points ⭐ {points}</label>
-                <input aria-label="Task points" type="range" min={5} max={100} step={5} value={points} onChange={e => setPoints(Number(e.target.value))}
+                <input type="range" min={5} max={100} step={5} value={points} onChange={e => setPoints(Number(e.target.value))}
                   style={{ width: "100%", accentColor: "var(--brand)" }} />
                 <div className="flex justify-between text-faint" style={{ fontSize: 10 }}><span>5</span><span>100</span></div>
               </div>

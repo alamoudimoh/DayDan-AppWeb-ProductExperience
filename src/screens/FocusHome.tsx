@@ -21,7 +21,7 @@ function TaskRow({ task, onClick, onComplete }: { task: Task; onClick: () => voi
   const statusColor = task.status === "overdue" ? "var(--sig-over)" : task.status === "done" ? "var(--sig-done)" : "var(--t-faint)";
   const isDone = task.status === "done";
   return (
-    <div className={`task-row ${isDone ? "done" : ""}`}>
+    <div className={`task-row ${isDone ? "done" : ""}`} onClick={onClick}>
       <button
         className={`task-check ${isDone ? "checked" : ""}`}
         onClick={e => { e.stopPropagation(); if (!isDone) onComplete(task.id); }}
@@ -29,7 +29,7 @@ function TaskRow({ task, onClick, onComplete }: { task: Task; onClick: () => voi
       >
         {isDone && <Icon name="check" size={11} style={{ color: "white" }} />}
       </button>
-      <button className="task-row-open flex-1 min-w-0 text-start" aria-label={`Open task: ${task.title}`} onClick={onClick}>
+      <div className="flex-1 min-w-0">
         <div className="task-title text-primary font-medium" style={{ fontSize: 14 }}>{task.title}</div>
         <div className="flex items-center gap-2 mt-0.5">
           {task.category && (
@@ -40,7 +40,7 @@ function TaskRow({ task, onClick, onComplete }: { task: Task; onClick: () => voi
           )}
           {task.isRecurring && <Icon name="repeat" size={11} style={{ color: "var(--t-faint)" }} />}
         </div>
-      </button>
+      </div>
       {assignee && (
         <div className="avatar flex-shrink-0" style={{ width: 24, height: 24, background: assignee.avatarColor, fontSize: 9 }}>
           {assignee.initials}
@@ -130,7 +130,7 @@ export default function FocusHome({ ctx, tasks, isSolo, onComplete }: { ctx: App
         )}
 
         {/* Two-column layout */}
-        <div className="focus-home-grid grid gap-6" style={{ gridTemplateColumns: "1fr 1fr" }}>
+        <div className="grid gap-6" style={{ gridTemplateColumns: "1fr 1fr" }}>
           {/* Left: Today's tasks */}
           <div className="flex flex-col gap-6">
             {/* Today section */}

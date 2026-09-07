@@ -37,8 +37,6 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
   };
 
   const handleForgot = () => {
-    if (!email) { setError("Enter your email address to reset your password."); return; }
-    setError("");
     setLoading(true);
     setTimeout(() => { setLoading(false); setForgotSent(true); }, 800);
   };
@@ -78,20 +76,19 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
 
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="sign-in-email" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Email</label>
-                  <input id="sign-in-email" className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
+                  <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Email</label>
+                  <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
                 </div>
                 <div>
-                  <label htmlFor="sign-in-password" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Password</label>
+                  <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Password</label>
                   <input
-                    id="sign-in-password"
                     className="input" type="password" value={password}
                     onChange={e => setPassword(e.target.value)} placeholder="••••••••"
                     autoComplete="current-password"
                     onKeyDown={e => e.key === "Enter" && handleSignIn()}
                   />
                 </div>
-                {error && <div role="alert" style={{ fontSize: 12, color: "var(--sig-over)", fontWeight: 600 }}>{error}</div>}
+                {error && <div style={{ fontSize: 12, color: "var(--sig-over)", fontWeight: 600 }}>{error}</div>}
                 <button className="btn btn-primary" style={{ justifyContent: "center", width: "100%", marginTop: 4 }} onClick={handleSignIn} disabled={loading}>
                   {loading ? "Signing in…" : "Sign in"}
                 </button>
@@ -131,9 +128,8 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
 
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="mfa-code" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Verification code</label>
+                  <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Verification code</label>
                   <input
-                    id="mfa-code"
                     className="input"
                     type="text"
                     inputMode="numeric"
@@ -146,13 +142,13 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
                     autoFocus
                   />
                 </div>
-                {error && <div role="alert" style={{ fontSize: 12, color: "var(--sig-over)", fontWeight: 600 }}>{error}</div>}
+                {error && <div style={{ fontSize: 12, color: "var(--sig-over)", fontWeight: 600 }}>{error}</div>}
                 <button className="btn btn-primary" style={{ justifyContent: "center", width: "100%", marginTop: 4 }} onClick={handleMFA} disabled={loading}>
                   {loading ? "Verifying…" : "Verify and sign in"}
                 </button>
                 <div className="flex justify-between items-center">
                   <button className="btn btn-ghost btn-sm text-muted" onClick={() => { setStep("signin"); setMfaCode(""); setError(""); }}>← Back</button>
-                  <button className="btn btn-ghost btn-sm" style={{ color: "var(--brand)", fontSize: 12 }} onClick={() => setError("A new verification code has been sent.")}>Resend code</button>
+                  <button className="btn btn-ghost btn-sm" style={{ color: "var(--brand)", fontSize: 12 }}>Resend code</button>
                 </div>
               </div>
 
@@ -181,8 +177,8 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
               ) : (
                 <div className="flex flex-col gap-4">
                   <div>
-                  <label htmlFor="reset-email" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Email</label>
-                    <input id="reset-email" className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
+                    <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Email</label>
+                    <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
                   </div>
                   <button className="btn btn-primary" style={{ justifyContent: "center", width: "100%", marginTop: 4 }} onClick={handleForgot} disabled={loading}>
                     {loading ? "Sending…" : "Send reset link"}

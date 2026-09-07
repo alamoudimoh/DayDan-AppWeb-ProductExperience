@@ -29,7 +29,6 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
       name: newListName.trim(),
       emoji: newListEmoji,
       isShared: !isSolo && newListShared,
-      ownerId: "sarah",
       items: []
     };
     setLists(prev => [...prev, newList]);
@@ -95,7 +94,7 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
       </div>
 
       <div className="px-4 md:px-7">
-        <div className="shopping-layout grid gap-5" style={{ gridTemplateColumns: "220px 1fr" }}>
+        <div className="grid gap-5" style={{ gridTemplateColumns: "220px 1fr" }}>
           {/* List sidebar */}
           <div className="flex flex-col gap-2">
             {visibleLists.map(l => {
@@ -234,7 +233,7 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
                     Clear done
                   </button>
                 )}
-                <button aria-label="Edit shopping list" className="btn btn-ghost btn-icon text-muted" onClick={() => {
+                <button className="btn btn-ghost btn-icon text-muted" onClick={() => {
                   setEditListName(currentList.name);
                   setEditListEmoji(currentList.emoji);
                   setEditListShared(currentList.isShared || false);
@@ -248,7 +247,6 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
             {/* Add item input */}
             <div className="flex gap-2 mb-4">
               <input
-                aria-label="Add shopping item"
                 className="input flex-1"
                 placeholder="Add an item..."
                 value={newItem}
@@ -277,7 +275,6 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
                     return (
                       <div key={item.id} className="flex items-center gap-3 px-4 py-3 border-b border-line" style={{ borderColor: "var(--line)" }}>
                         <button
-                          aria-label={`Mark ${item.text} complete`}
                           onClick={() => toggleItem(currentList.id, item.id)}
                           style={{ width: 22, height: 22, borderRadius: 6, border: "2px solid var(--line-strong)", background: "transparent", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}
                         />
@@ -305,10 +302,10 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
                             </div>
                           )}
                         </div>
-                        <button aria-label={`Edit ${item.text}`} className="btn btn-ghost btn-icon" onClick={() => { setEditingId(item.id); setEditText(item.text); }}>
+                        <button className="btn btn-ghost btn-icon" onClick={() => { setEditingId(item.id); setEditText(item.text); }}>
                           <Icon name="edit" size={13} />
                         </button>
-                        <button aria-label={`Remove ${item.text}`} className="btn btn-ghost btn-icon text-sig-over" onClick={() => removeItem(currentList.id, item.id)}>
+                        <button className="btn btn-ghost btn-icon text-sig-over" onClick={() => removeItem(currentList.id, item.id)}>
                           <Icon name="trash" size={13} />
                         </button>
                       </div>
@@ -322,15 +319,14 @@ export default function ShoppingScreen({ ctx, isSolo }: { ctx: AppCtx; isSolo: b
                         <span className="text-faint" style={{ fontSize: 12, fontWeight: 700 }}>Checked off ({done.length})</span>
                       </div>
                       {done.map(item => (
-                        <div key={item.id} className="flex items-center gap-3 px-4 py-3 border-b border-line" style={{ borderColor: "var(--line)" }}>
+                        <div key={item.id} className="flex items-center gap-3 px-4 py-3 border-b border-line" style={{ borderColor: "var(--line)", opacity: 0.7 }}>
                           <button
-                            aria-label={`Mark ${item.text} incomplete`}
                             onClick={() => toggleItem(currentList.id, item.id)}
                             style={{ width: 22, height: 22, borderRadius: 6, border: "2px solid var(--sig-done)", background: "var(--sig-done)", cursor: "pointer", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                             <Icon name="check" size={12} style={{ color: "white" }} />
                           </button>
                           <span className="text-muted flex-1" style={{ fontSize: 14, textDecoration: "line-through" }}>{item.text}</span>
-                          <button aria-label={`Remove ${item.text}`} className="btn btn-ghost btn-icon text-sig-over" onClick={() => removeItem(currentList.id, item.id)}>
+                          <button className="btn btn-ghost btn-icon text-sig-over" onClick={() => removeItem(currentList.id, item.id)}>
                             <Icon name="trash" size={13} />
                           </button>
                         </div>

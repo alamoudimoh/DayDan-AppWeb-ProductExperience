@@ -1,7 +1,6 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { AppCtx, Icon, Theme, View } from "../App";
 import { MEMBERS } from "../data";
-import { useDialogAccessibility } from "../hooks/useDialogAccessibility";
 
 interface Props {
   ctx: AppCtx;
@@ -38,8 +37,6 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
   return (
     <button
       onClick={onChange}
-      aria-label="Toggle setting"
-      aria-pressed={on}
       style={{
         width: 44, height: 24, borderRadius: 12, background: on ? "var(--brand)" : "var(--line-strong)",
         border: "none", cursor: "pointer", position: "relative", transition: "background 0.2s", padding: 0
@@ -55,7 +52,6 @@ function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
 function SelectField({ value, onChange, options }: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
     <select
-      aria-label="Setting option"
       value={value}
       onChange={e => onChange(e.target.value)}
       style={{
@@ -70,8 +66,6 @@ function SelectField({ value, onChange, options }: { value: string; onChange: (v
 
 /* ─── Invite modal ────────────────────── */
 function InviteModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (email: string) => void }) {
-  const dialogRef = useRef<HTMLDivElement>(null);
-  useDialogAccessibility(onClose, dialogRef);
   const [inviteEmail, setInviteEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -89,23 +83,22 @@ function InviteModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
   };
 
   return (
-    <div className="modal-overlay" onMouseDown={onClose}>
-      <div ref={dialogRef} className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="invite-dialog-title" aria-describedby="invite-dialog-description" style={{ maxWidth: 440 }} onMouseDown={e => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-panel" style={{ maxWidth: 440 }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 pt-6 pb-4" style={{ borderBottom: "1px solid var(--line)" }}>
-          <h2 id="invite-dialog-title" className="font-bold text-primary" style={{ fontSize: 17 }}>Invite to your Circle</h2>
-          <button aria-label="Close invite dialog" className="btn btn-ghost btn-icon" onClick={onClose}><Icon name="x" size={18} /></button>
+          <div className="font-bold text-primary" style={{ fontSize: 17 }}>Invite to your Circle</div>
+          <button className="btn btn-ghost btn-icon" onClick={onClose}><Icon name="x" size={18} /></button>
         </div>
         <div className="p-6">
           {!sent ? (
             <>
-              <p id="invite-dialog-description" className="text-muted mb-5" style={{ fontSize: 14, lineHeight: 1.6 }}>
+              <div className="text-muted mb-5" style={{ fontSize: 14, lineHeight: 1.6 }}>
                 Invite a family member or partner. They'll get an email to join your household. Family features become active once they accept.
-              </p>
+              </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <label htmlFor="invite-email" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Their email address</label>
+                  <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Their email address</label>
                   <input
-                    id="invite-email" data-dialog-initial-focus
                     className="input"
                     type="email"
                     value={inviteEmail}
@@ -115,7 +108,7 @@ function InviteModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
                     autoFocus
                   />
                 </div>
-                {error && <div role="alert" style={{ fontSize: 12, color: "var(--sig-over)", fontWeight: 600 }}>{error}</div>}
+                {error && <div style={{ fontSize: 12, color: "var(--sig-over)", fontWeight: 600 }}>{error}</div>}
                 <div className="p-3 rounded-lg flex items-start gap-2" style={{ background: "var(--brand-faint)", borderRadius: "var(--r-md)" }}>
                   <Icon name="info" size={15} style={{ color: "var(--brand)", flexShrink: 0, marginTop: 1 }} />
                   <div style={{ fontSize: 12, color: "var(--t-muted)" }}>
@@ -149,18 +142,16 @@ function InviteModal({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
 
 /* ─── Edit profile modal ──────────────── */
 function EditProfileModal({ onClose, onSave }: { onClose: () => void; onSave: (name: string, email: string) => void }) {
-  const dialogRef = useRef<HTMLDivElement>(null);
-  useDialogAccessibility(onClose, dialogRef);
   const currentUser = MEMBERS.find(m => m.isCurrentUser)!;
   const [name, setName] = useState(currentUser.name);
   const [email, setEmail] = useState(currentUser.email);
 
   return (
-    <div className="modal-overlay" onMouseDown={onClose}>
-      <div ref={dialogRef} className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="profile-dialog-title" style={{ maxWidth: 440 }} onMouseDown={e => e.stopPropagation()}>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-panel" style={{ maxWidth: 440 }} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 pt-6 pb-4" style={{ borderBottom: "1px solid var(--line)" }}>
-          <h2 id="profile-dialog-title" className="font-bold text-primary" style={{ fontSize: 17 }}>Edit Profile</h2>
-          <button aria-label="Close profile dialog" className="btn btn-ghost btn-icon" onClick={onClose}><Icon name="x" size={18} /></button>
+          <div className="font-bold text-primary" style={{ fontSize: 17 }}>Edit Profile</div>
+          <button className="btn btn-ghost btn-icon" onClick={onClose}><Icon name="x" size={18} /></button>
         </div>
         <div className="p-6">
           <div className="flex flex-col gap-5">
@@ -173,12 +164,12 @@ function EditProfileModal({ onClose, onSave }: { onClose: () => void; onSave: (n
               </div>
             </div>
             <div>
-              <label htmlFor="profile-name" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Display name</label>
-              <input id="profile-name" data-dialog-initial-focus className="input" value={name} onChange={e => setName(e.target.value)} />
+              <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Display name</label>
+              <input className="input" value={name} onChange={e => setName(e.target.value)} />
             </div>
             <div>
-              <label htmlFor="profile-email" className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Email</label>
-              <input id="profile-email" className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} />
+              <label className="block font-semibold text-primary mb-1.5" style={{ fontSize: 13 }}>Email</label>
+              <input className="input" type="email" value={email} onChange={e => setEmail(e.target.value)} />
             </div>
             <div className="flex gap-3">
               <button className="btn btn-secondary flex-1" style={{ justifyContent: "center" }} onClick={onClose}>Cancel</button>
@@ -201,7 +192,6 @@ const SESSIONS = [
 export default function SettingsScreen({ ctx, isSolo }: Props) {
   const currentUser = MEMBERS.find(m => m.isCurrentUser)!;
   const isRTL = document.documentElement.dir === "rtl";
-  const isChild = ctx.persona === "child";
 
   /* ─ local state ─ */
   const [showInvite, setShowInvite] = useState(false);
@@ -449,7 +439,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
           </Section>
 
           {/* ── Household / Circle ── */}
-          {!isSolo && !isChild ? (
+          {!isSolo ? (
             <Section title="Household">
               <Row icon="users" label="Household members" sub={`${MEMBERS.length} active members`}>
                 <button className="btn btn-secondary btn-sm">Manage</button>
@@ -488,7 +478,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
                 <button className="btn btn-primary btn-sm" onClick={() => setShowInvite(true)}>Invite</button>
               </Row>
             </Section>
-          ) : !isChild ? (
+          ) : (
             <Section title="Circle">
               <div className="px-5 py-5">
                 <div className="flex items-center gap-4 mb-4">
@@ -516,7 +506,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
                 )}
               </div>
             </Section>
-          ) : null}
+          )}
 
           {/* ── Privacy & Data ── */}
           <Section title="Privacy &amp; Data">
