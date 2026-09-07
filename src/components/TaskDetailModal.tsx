@@ -1,7 +1,11 @@
 import { AppCtx, Icon } from "../App";
 import { Task, getMemberById, formatDate } from "../data";
+import { useRef } from "react";
+import { useDialogAccessibility } from "../hooks/useDialogAccessibility";
 
 export default function TaskDetailModal({ task, ctx, onComplete, onDelete, onEdit, onReopen }: { task: Task; ctx: AppCtx; onComplete: (id: string) => void; onDelete: (id: string) => void; onEdit: (t: Task) => void; onReopen: (id: string) => void }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialogAccessibility(ctx.closeTask, dialogRef);
   const assignee = task.assigneeId ? getMemberById(task.assigneeId) : null;
   const isDone = task.status === "done";
   const isOverdue = task.status === "overdue";
@@ -22,12 +26,14 @@ export default function TaskDetailModal({ task, ctx, onComplete, onDelete, onEdi
   };
 
   return (
-    <div className="modal-overlay" onClick={ctx.closeTask}>
-      <div className="drawer-panel" onClick={e => e.stopPropagation()}>
+    <div className="modal-overlay" onMouseDown={ctx.closeTask}>
+      <div ref={dialogRef} className="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="task-detail-title" onMouseDown={e => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-start gap-4 px-6 pt-6 pb-4 border-b border-line" style={{ borderColor: "var(--line)" }}>
           <button
             onClick={() => !isDone && onComplete(task.id)}
+            aria-label={isDone ? "Task completed" : `Mark ${task.title} complete`}
+            disabled={isDone}
             style={{
               width: 28, height: 28, borderRadius: 8, flexShrink: 0, marginTop: 2,
               border: `2px solid ${isDone ? "var(--sig-done)" : "var(--line-strong)"}`,
@@ -38,7 +44,7 @@ export default function TaskDetailModal({ task, ctx, onComplete, onDelete, onEdi
             {isDone && <Icon name="check" size={14} style={{ color: "white" }} />}
           </button>
           <div className="flex-1 min-w-0">
-            <h2 className="text-primary font-bold" style={{ fontSize: 18, margin: 0, textDecoration: isDone ? "line-through" : "none", opacity: isDone ? 0.6 : 1 }}>{task.title}</h2>
+            <h2 id="task-detail-title" className="text-primary font-bold" style={{ fontSize: 18, margin: 0, textDecoration: isDone ? "line-through" : "none", opacity: isDone ? 0.6 : 1 }}>{task.title}</h2>
             <div className="flex items-center gap-2 mt-2 flex-wrap">
               <span className="badge" style={{ background: `color-mix(in srgb, ${statusColor} 10%, transparent)`, color: statusColor, fontSize: 11 }}>{statusLabel}</span>
               {task.category && <span className="badge bg-surface-2 text-muted" style={{ fontSize: 11 }}>{task.category}</span>}
@@ -46,7 +52,7 @@ export default function TaskDetailModal({ task, ctx, onComplete, onDelete, onEdi
               {task.priority === "high" && <Icon name="flag" size={13} style={{ color: "var(--sig-flag)" }} />}
             </div>
           </div>
-          <button className="btn btn-ghost btn-icon" onClick={ctx.closeTask}>
+          <button data-dialog-initial-focus aria-label="Close task details" className="btn btn-ghost btn-icon" onClick={ctx.closeTask}>
             <Icon name="x" size={18} />
           </button>
         </div>
