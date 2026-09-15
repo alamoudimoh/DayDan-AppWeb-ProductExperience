@@ -25,7 +25,7 @@
 
 - `src/App.tsx`
 - `src/data.ts`
-- `src/imports/DayDan-Brand-Summary.md`
+- `src/imports/Dydan-Brand-Summary.md`
 - `src/imports/DayDan-Color_Palette.html`
 - `src/imports/Sovereign-Brand-Summary.md`
 - `src/imports/pasted_text/daydan-product-brief.md`
