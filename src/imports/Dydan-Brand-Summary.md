@@ -1,11 +1,11 @@
-# DayDan — Brand Identity Summary for Figma Make
+# Dydan — Brand Identity Summary for Figma Make
 
-> Condensed from the supplied DayDan brand-identity and color-system HTML references.
-> Some source material still uses the legacy name **Taskier**; for this project, treat those identity rules as **DayDan**.
+> Condensed from the supplied Dydan brand-identity and color-system HTML references.
+> Some source material still uses the legacy name **Taskier**; for this project, treat those identity rules as **Dydan**.
 
 ## Brand intent
 
-DayDan is built around **momentum, flow, clarity, and approachable everyday productivity**.
+Dydan is built around **momentum, flow, clarity, and approachable everyday productivity**.
 
 Core identity pair:
 
@@ -46,7 +46,7 @@ The violet carries structure and primary action. Aqua signals movement, active h
 | Aqua / Action | `#7DD3FC` | Accessible aqua-family action/signal |
 | Soft Violet | `#1E1B4B` | Soft dark violet surface |
 
-The primary DayDan identity remains Violet × Aqua; accessible tints may be used for interface contrast without redefining the identity.
+The primary Dydan identity remains Violet × Aqua; accessible tints may be used for interface contrast without redefining the identity.
 
 ## Semantic signals
 
@@ -76,7 +76,7 @@ Arabic is a first-class UI language. The product should support real RTL layout 
 - Light and dark application surfaces do **not** create separate logo identities.
 - Accessible supporting tints belong to UI content, not to replacement logo colors.
 
-The legacy Taskier wordmark references in the source should be interpreted as identity guidance for DayDan, not as the product name to display.
+The legacy Taskier wordmark references in the source should be interpreted as identity guidance for Dydan, not as the product name to display.
 
 ## Accessibility / contrast principles
 
@@ -96,4 +96,4 @@ For Figma Make:
 - Use these tokens and rules as identity constraints.
 - Do **not** copy the HTML reference page structure.
 - Figma is free to determine navigation, component styling, composition, density, surfaces, hierarchy, and interaction patterns.
-- The resulting UI should feel recognizably DayDan without turning every surface violet or aqua.
+- The resulting UI should feel recognizably Dydan without turning every surface violet or aqua.

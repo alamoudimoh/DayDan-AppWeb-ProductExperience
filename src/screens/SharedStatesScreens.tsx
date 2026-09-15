@@ -8,7 +8,7 @@ export function OfflineScreen({ ctx }: { ctx: AppCtx }) {
       </div>
       <h2 className="text-primary font-bold" style={{ fontSize: 20, marginBottom: 8, textAlign: "center" }}>You're offline</h2>
       <p className="text-muted" style={{ fontSize: 14, textAlign: "center", maxWidth: 300, marginBottom: 24, lineHeight: 1.5 }}>
-        DayDan is currently offline. Any changes you make will be saved locally and synced when you reconnect.
+        Dydan is currently offline. Any changes you make will be saved locally and synced when you reconnect.
       </p>
       <div className="flex gap-3">
         <button className="btn btn-secondary" onClick={() => ctx.navigate("home")}>Go to Home</button>
