@@ -46,7 +46,7 @@ export default function OnboardingScreen({ theme, onComplete }: Props) {
               <div style={{ marginBottom: 24 }}>
                 <LogoMark size={72} theme={theme} />
               </div>
-              <h1 className="text-primary font-bold mb-3" style={{ fontSize: 28, lineHeight: 1.2 }}>Welcome to DayDan</h1>
+              <h1 className="text-primary font-bold mb-3" style={{ fontSize: 28, lineHeight: 1.2 }}>Welcome to Dydan</h1>
               <p className="text-muted mb-8" style={{ fontSize: 15, lineHeight: 1.7, maxWidth: 360, margin: "0 auto 32px" }}>
                 Your household, organised. Tasks, routines, goals and shared lists — all in one place.
               </p>
@@ -187,7 +187,7 @@ export default function OnboardingScreen({ theme, onComplete }: Props) {
                 </div>
               </div>
               <button className="btn btn-primary btn-lg" style={{ justifyContent: "center", width: "100%" }} onClick={() => onComplete(selectedView, name)}>
-                Start using DayDan
+                Start using Dydan
               </button>
             </div>
           )}

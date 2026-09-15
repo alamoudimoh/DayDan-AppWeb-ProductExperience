@@ -1,6 +1,6 @@
 # Migration Decisions - Product Experience
 
-This is an audit-only decision record for the Product Experience repository at `origin/main` commit `764b6fb`. It does not authorize remediation.
+This record began as an audit-only decision record for the Product Experience repository at `origin/main` commit `764b6fb`. The approved remediation is closed on `fix/dydan-identity-product-experience`; original audit decisions remain below as evidence.
 
 ## Product/UI Identity
 
@@ -11,7 +11,7 @@ This is an audit-only decision record for the Product Experience repository at `
 5. Compatibility impact: None.
 6. Cross-repository dependencies: None found.
 7. Required remediation: Change the listed UI and copy entries in PX-002, PX-005, PX-008 through PX-020, and PX-024, PX-026 through PX-030.
-8. Verification required: Typecheck, build, and Playwright accessibility/flow checks. Product owner must approve bilingual label placement because `دَيْدَن` is currently absent.
+8. Verification completed: Typecheck, build, and Playwright accessibility/flow checks. No Arabic product label existed, so no new Arabic branding was introduced; any future label must use `دَيْدَن`.
 
 ## Browser Storage
 
@@ -21,8 +21,8 @@ This is an audit-only decision record for the Product Experience repository at `
 4. Rationale: The imported HTML is not referenced by any source import, build configuration, or runtime route.
 5. Compatibility impact: No Product Experience user state exists. If the artifact becomes deployed, existing artifact users may have persisted `taskier-*` values.
 6. Cross-repository dependencies: None found.
-7. Required remediation: Do not rename the keys unless the artifact lifecycle is explicitly approved; then reclassify as C and implement a migrate-on-read or accepted reset strategy.
-8. Verification required: Confirm bundle inclusion and production serving before changing any key.
+7. Completed remediation: Confirmed the asset is outside the Vite entry/import graph and is not served by the current Product Experience build. The keys remain preserved as historical source content.
+8. Verification completed: No bundle inclusion or production serving was found.
 
 ## PWA/Manifest
 
@@ -87,8 +87,8 @@ This is an audit-only decision record for the Product Experience repository at `
 4. Rationale: The identifier changes application behavior, but it is only in-memory React state and static tests.
 5. Compatibility impact: No browser storage, route, API, or external consumer exists today.
 6. Cross-repository dependencies: None found.
-7. Required remediation: Rename the discriminant, all runtime comparisons, and the test assertion in one atomic change. Do not add a compatibility alias without evidence of persisted consumers.
-8. Verification required: Typecheck and run `pnpm test:e2e`; grep for the old identifier excluding audit evidence.
+7. Completed remediation: Renamed the discriminant, all runtime comparisons, and the test assertion atomically. No compatibility alias was added.
+8. Verification completed: Typecheck, `pnpm test:e2e`, and legacy-identity searches confirm no active old identifier remains.
 
 ## Testing/Visual Baselines
 
@@ -98,8 +98,8 @@ This is an audit-only decision record for the Product Experience repository at `
 4. Rationale: The assertion follows runtime display text.
 5. Compatibility impact: None.
 6. Cross-repository dependencies: None.
-7. Required remediation: Update it only in the coordinated UI/theme remediation.
-8. Verification required: Run the relevant Playwright project after the text change.
+7. Completed remediation: Updated it with the coordinated UI/theme remediation.
+8. Verification completed: Ran the relevant Playwright projects.
 
 ## Documentation And Historical Imports
 
@@ -109,8 +109,8 @@ This is an audit-only decision record for the Product Experience repository at `
 4. Rationale: No tracked runtime module imports these assets. They record source/provenance rather than shipped product behavior.
 5. Compatibility impact: None for the runtime application. The standalone palette's own localStorage keys need a fresh compatibility decision only if it is served.
 6. Cross-repository dependencies: None found.
-7. Required remediation: Product/design owner chooses whether to retain the inputs as historical evidence, regenerate them, or archive/remove them. Do not globally replace wording inside the historical source.
-8. Verification required: Confirm an artifact's build/runtime inclusion before altering its internal IDs or storage keys.
+7. Completed remediation: Retained the inputs as historical evidence. No wording, internal ID, or storage key was globally replaced.
+8. Verification completed: Confirmed no historical import is included in the build/runtime graph.
 
 ## Legacy Compatibility
 
@@ -123,6 +123,15 @@ This is an audit-only decision record for the Product Experience repository at `
 7. Required remediation: None until the artifact owner decides its lifecycle.
 8. Verification required: If an inherited artifact is promoted into a deployed surface, repeat the contract audit before changes.
 
+## Final Finding Dispositions
+
+| Finding IDs | Final status | Disposition |
+|---|---|---|
+| PX-001 through PX-031 | Remediated | 21 active copy/comment renames and 10 coordinated technical/test renames completed. |
+| PX-032 through PX-040 | Historical Preserve | Unbundled imported Figma provenance retained. |
+| PX-041 through PX-104 | Non-Shipped Legacy Asset | Standalone imported palette is outside the Vite runtime graph; Taskier identifiers and storage keys are historical only. |
+| PX-105 through PX-121 | Historical Preserve | Unbundled imported source and its historical paths retained. |
+
 ## Completion Condition
 
-All 121 baseline occurrences are represented in `identity-inventory.csv`. No remediation was performed. The only unresolved non-occurrence is product/brand confirmation of where the canonical Arabic identity `دَيْدَن` must appear.
+All 121 baseline occurrences remain represented in `identity-inventory.csv`. The 31 active findings are remediated, the 90 historical findings are retained only as documented non-runtime evidence, active legacy references are `0`, and unexplained legacy references are `0`. No current Arabic product-label surface exists; any future Arabic branding must use `دَيْدَن`.

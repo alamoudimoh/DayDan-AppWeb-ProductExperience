@@ -136,7 +136,7 @@ test("auth, MFA, and onboarding have no serious or critical axe violations", asy
   await expect(page.getByRole("heading", { name: /good morning/i })).toBeVisible();
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("button", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Demo", exact: true }).click();
-  await expect(page.getByRole("heading", { name: /welcome to daydan/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /welcome to dydan/i })).toBeVisible();
   await axe(page);
 });
 

@@ -1,14 +1,15 @@
-# Dydan Identity Audit - Product Experience
+# Dydan Identity Audit And Remediation Closure - Product Experience
 
 ## Scope
 
 - Repository: `alamoudimoh/DayDan-AppWeb-ProductExperience`
-- Branch: `audit/dydan-identity-product-experience`
+- Audit branch: `audit/dydan-identity-product-experience`
+- Remediation branch: `fix/dydan-identity-product-experience`
 - Baseline: `origin/main` at `764b6fb` (`revert: restore clean product experience baseline after Figma sync`)
 - Audit date: 2026-09-15
 - Method: tracked-file inventory using `git ls-files` and exact searches for `DayDan`, `Daydan`, `daydan`, `DAYDAN`, `Taskier`, `taskier`, `TASKIER`, `Donetick`, `donetick`, `DONETICK`, plus Arabic derived forms.
 
-## Results
+## Audit Baseline
 
 | Metric | Count |
 |---|---:|
@@ -47,6 +48,30 @@
 | E - Remove | 0 | No identity-only runtime artifact was proven dead enough to remove without owner direction. |
 | F - Investigate | 0 | No legacy occurrence requires external verification; see the non-occurrence Arabic identity decision below. |
 
+## Remediation Closure
+
+| Metric | Count |
+|---|---:|
+| Findings remediated | 31 |
+| Safe rename findings remediated | 21 |
+| Technical renames completed | 10 |
+| Historical references retained | 26 |
+| Non-shipped historical asset references retained | 64 |
+| Active legacy references remaining | 0 |
+| Unexplained legacy references remaining | 0 |
+
+### Final Dispositions
+
+- PX-001 through PX-031: **Remediated**. Active display copy now uses `Dydan`; the in-memory `Theme` discriminant and corresponding Playwright assertion now use `dydan`.
+- PX-032 through PX-040 and PX-105 through PX-121: **Historical Preserve**. These are unbundled imported Figma source/provenance material and their legacy paths.
+- PX-041 through PX-104: **Non-Shipped Legacy Asset**. `src/imports/DayDan-Color_Palette.html` is not part of the Vite import graph or runtime output. Its `taskier-lang` and `taskier-surface` keys remain intact because the standalone historical asset is not served.
+
+### Arabic Identity Verification
+
+- No active product surface renders Arabic product branding, so no new Arabic branding was introduced.
+- Active source contains no incomplete, incorrectly diacritized, transliterated, or mixed legacy Arabic product identity.
+- Any future Arabic product label must use exactly `دَيْدَن`.
+
 ## Highest-Risk Items
 
 1. `daydan` is the in-memory `Theme` discriminant in `src/App.tsx` and `src/screens/SettingsScreen.tsx`. It is not persisted in this prototype, but all producer, consumer, and test references must change atomically.
@@ -59,21 +84,20 @@ No implemented cross-repository contract was found. This prototype has no API cl
 
 The app only models authentication, sessions, notifications, sync, and offline behavior in local React state or static copy. Those simulations are not contracts with Dydan Server, Dydan AppWeb, or Dydan Mobile.
 
-## Unresolved Item
+## Arabic Product Label Decision
 
-No product label currently renders the canonical Arabic identity `دَيْدَن`; the UI only exposes the generic language label `العربية`. Product/brand ownership must decide which bilingual shell surfaces require the Arabic product name before remediation. This is an audit decision, not a legacy occurrence, so it is not included in the occurrence totals above.
+No product label currently renders the canonical Arabic identity `دَيْدَن`; the UI only exposes the generic language label `العربية`. This remediation did not introduce Arabic branding where it was not previously intended. Product/brand ownership must approve any future bilingual product-label surface.
 
-## Recommended Remediation Sequence
+## Completed Remediation Sequence
 
-1. Obtain product/brand approval for English `Dydan`, Arabic `دَيْدَن`, and the intended bilingual display surfaces.
-2. Rename runtime display text, accessibility-facing text, comments, and the error-report sample to the approved canonical identity.
-3. Rename the in-memory `daydan` theme discriminant to `dydan` in one coordinated change with its Playwright assertion; verify no persistence was introduced before landing it.
-4. Preserve imported source material as historical evidence or regenerate/archive it under owner direction. If any import becomes served content, assess `taskier-lang` and `taskier-surface` as persisted-browser compatibility keys first.
-5. Rerun the tracked-file searches excluding this audit directory, then typecheck, build, and run the relevant Playwright coverage.
+1. Renamed runtime display text, accessibility-facing text, comments, and the local-only error-report sample to `Dydan`.
+2. Renamed the in-memory `daydan` theme discriminant to `dydan` with every producer, consumer, and Playwright assertion.
+3. Confirmed the historical imports are outside the Vite entry/import graph; retained them without changing their provenance or standalone storage keys.
+4. Reran tracked-file identity searches and the repository verification suite.
 
-## Audit-Only Confirmation
+## Scope Confirmation
 
-No runtime code, test, build, deployment, route, package, environment, or asset was remediated. This branch adds only the audit artifacts in this directory.
+No API contract, browser storage, route, package metadata, deployment metadata, version, visual baseline, or cross-repository integration was changed. The product version remains `1.0.0`.
 
 ## Reproduction
 

@@ -51,7 +51,7 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
           <div className="flex items-center gap-3 mb-8">
             <LogoMark size={36} theme={theme} />
             <div>
-              <div className="font-bold text-primary" style={{ fontSize: 20 }}>DayDan</div>
+              <div className="font-bold text-primary" style={{ fontSize: 20 }}>Dydan</div>
               <div className="text-faint" style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.09em" }}>Household Management</div>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function AuthScreen({ theme, onAuthenticated, isSessionExpired }:
           )}
         </div>
 
-        <div className="text-center text-faint mt-4" style={{ fontSize: 11 }}>DayDan v2.4.1 · Your data stays in your household</div>
+        <div className="text-center text-faint mt-4" style={{ fontSize: 11 }}>Dydan v2.4.1 · Your data stays in your household</div>
       </div>
     </div>
   );

@@ -315,7 +315,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
             </Row>
             <Row icon="log_out" label="Sign out" sub="End your current session">
               <button className="btn btn-danger btn-sm"
-                onClick={() => ctx.showConfirm({ title: "Sign out?", message: "You'll need to sign in again to access DayDan.", confirmLabel: "Sign out", danger: true, onConfirm: ctx.signOut })}>
+                onClick={() => ctx.showConfirm({ title: "Sign out?", message: "You'll need to sign in again to access Dydan.", confirmLabel: "Sign out", danger: true, onConfirm: ctx.signOut })}>
                 Sign out
               </button>
             </Row>
@@ -326,7 +326,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
             <div className="px-5 py-4 border-b border-line" style={{ borderColor: "var(--line)" }}>
               <div className="font-medium text-primary mb-3" style={{ fontSize: 14 }}>Theme</div>
               <div className="grid grid-cols-2 gap-3">
-                {(["daydan", "sovereign"] as Theme[]).map(t => (
+                {(["dydan", "sovereign"] as Theme[]).map(t => (
                   <button key={t} onClick={() => ctx.setTheme(t)}
                     className="p-4 text-start border-2 transition-all"
                     style={{
@@ -336,14 +336,14 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
                       cursor: "pointer", fontFamily: "var(--font-ui)"
                     }}>
                     <div className="flex items-center gap-2 mb-2">
-                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: t === "daydan" ? "#4326EA" : "#1A1A1A", border: "2px solid var(--line)" }} />
+                      <div style={{ width: 20, height: 20, borderRadius: "50%", background: t === "dydan" ? "#4326EA" : "#1A1A1A", border: "2px solid var(--line)" }} />
                       <span className="font-bold text-primary" style={{ fontSize: 13 }}>
-                        {t === "daydan" ? "DayDan" : "Sovereign"}
+                        {t === "dydan" ? "Dydan" : "Sovereign"}
                       </span>
                       {ctx.theme === t && <Icon name="check" size={13} style={{ color: "var(--brand)" }} />}
                     </div>
                     <div className="text-muted" style={{ fontSize: 11 }}>
-                      {t === "daydan" ? "Momentum Violet + Flow Aqua" : "Onyx + Golden Yellow"}
+                      {t === "dydan" ? "Momentum Violet + Flow Aqua" : "Onyx + Golden Yellow"}
                     </div>
                   </button>
                 ))}
@@ -523,7 +523,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
             <Row icon="eye" label="Activity visible to household" sub="Other members can see your completed tasks">
               <Toggle on={activityVisible} onChange={() => setActivityVisible(v => !v)} />
             </Row>
-            <Row icon="download" label="Export my data" sub="Download a full copy of your DayDan data (JSON)">
+            <Row icon="download" label="Export my data" sub="Download a full copy of your Dydan data (JSON)">
               <button className="btn btn-secondary btn-sm" onClick={() => ctx.showToast("Export started — check your email")}>Export</button>
             </Row>
             <Row icon="upload" label="Import data" sub="Restore from a previous export">
@@ -570,7 +570,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
             <Row icon="help" label="Help &amp; documentation" sub="Guides, tutorials, and FAQs">
               <Icon name="chevron_right" size={15} style={{ color: "var(--t-faint)" }} />
             </Row>
-            <Row icon="send" label="Contact support" sub="Get help from the DayDan team">
+            <Row icon="send" label="Contact support" sub="Get help from the Dydan team">
               <Icon name="chevron_right" size={15} style={{ color: "var(--t-faint)" }} />
             </Row>
             <Row icon="error" label="Report a problem" sub="Send feedback or a bug report">
@@ -580,7 +580,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
 
           {/* ── About ── */}
           <Section title="About">
-            <Row icon="info" label="Version" sub="DayDan 2.4.1 · Build 20260815">
+            <Row icon="info" label="Version" sub="Dydan 2.4.1 · Build 20260815">
               <span className="badge bg-sig-done-bg text-sig-done" style={{ fontSize: 10 }}>Up to date</span>
             </Row>
             <Row icon="eye" label="Privacy policy" sub="How we handle your data">
@@ -594,7 +594,7 @@ export default function SettingsScreen({ ctx, isSolo }: Props) {
             </Row>
             <div className="px-5 py-4 text-center">
               <div className="text-faint" style={{ fontSize: 12 }}>Made with care for families everywhere</div>
-              <div className="text-faint" style={{ fontSize: 11, marginTop: 4 }}>© 2026 DayDan. All rights reserved.</div>
+              <div className="text-faint" style={{ fontSize: 11, marginTop: 4 }}>© 2026 Dydan. All rights reserved.</div>
             </div>
           </Section>
 
