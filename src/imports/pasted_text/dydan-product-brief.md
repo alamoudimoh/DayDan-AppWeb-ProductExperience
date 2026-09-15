@@ -1,15 +1,15 @@
-Resume and COMPLETE the original DayDan product brief from the beginning of this Figma Make conversation.
+Resume and COMPLETE the original Dydan product brief from the beginning of this Figma Make conversation.
 
 IMPORTANT:
 “Resume” does NOT mean continue the most recent typography task, theme task, or bug fix.
 
 The original master brief at the beginning of this conversation is the authoritative product scope.
 
-You already built a substantial portion of DayDan across previous versions. Preserve that work.
+You already built a substantial portion of Dydan across previous versions. Preserve that work.
 
 Your task now is to:
 
-1. Read the ORIGINAL master DayDan prompt from the beginning of this conversation in full.
+1. Read the ORIGINAL master Dydan prompt from the beginning of this conversation in full.
 2. Inspect the CURRENT implementation and all existing source files.
 3. Build a complete requirement-by-requirement gap inventory between:
    A. what the original master prompt required, and
@@ -29,7 +29,7 @@ Do NOT redesign completed screens.
 Do NOT replace the existing visual system.
 
 Do NOT change the current:
-- DayDan visual direction
+- Dydan visual direction
 - Sovereign visual direction
 - existing layouts unless necessary to support a missing original requirement
 - component sizing
@@ -40,7 +40,7 @@ Do NOT change the current:
 - current data model unnecessarily
 
 Keep the typography decisions already made:
-- English / Latin UI: Comfortaa in BOTH DayDan and Sovereign
+- English / Latin UI: Comfortaa in BOTH Dydan and Sovereign
 - Arabic UI: Cairo in BOTH themes
 
 Keep the theme-aware semantic member/project/goal/accent color-token implementation already completed.
@@ -53,7 +53,7 @@ This is a COMPLETION pass, not a redesign.
 FIRST: AUDIT THE ORIGINAL MASTER BRIEF
 ────────────────────────────────
 
-Compare the current app against EVERY section of the original DayDan master prompt.
+Compare the current app against EVERY section of the original Dydan master prompt.
 
 Do not assume that something is complete merely because a similar screen exists.
 
@@ -115,8 +115,8 @@ In particular, verify all of these areas:
 - mobile behavior
 - Arabic/RTL proof
 - accessibility behavior
-- Quest × DayDan
-- Focus × DayDan
+- Quest × Dydan
+- Focus × Dydan
 - Quest × Sovereign
 - Focus × Sovereign
 
@@ -200,7 +200,7 @@ Pending, inactive, or removed members do not count.
 
 9. Landing/public/entry states
    - create only what is necessary to make the COMPLETE PRODUCT EXPERIENCE coherent
-   - do not turn DayDan into a marketing-site project
+   - do not turn Dydan into a marketing-site project
    - application/product experience remains the priority
 
 ────────────────────────────────
@@ -213,7 +213,7 @@ The final prototype must allow me to navigate these flows coherently:
 
 ADULT / FOCUS
 
-Enter DayDan
+Enter Dydan
 → authenticate/enter app where appropriate
 → Focus Home
 → Today
@@ -487,7 +487,7 @@ The audit is only Step 1.
 
 Immediately implement the missing work.
 
-Continue until the original master DayDan brief has been completed as far as a Figma Make interactive product prototype can reasonably represent it.
+Continue until the original master Dydan brief has been completed as far as a Figma Make interactive product prototype can reasonably represent it.
 
 Only then respond with:
 
@@ -499,4 +499,4 @@ Only then respond with:
 
 Do not treat the most recent small edit as the scope.
 Do not merely resume Version 4.
-Resume and COMPLETE the ORIGINAL DAYDAN MASTER BRIEF.
+Resume and COMPLETE the ORIGINAL DYDAN MASTER BRIEF.
